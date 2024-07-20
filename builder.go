@@ -39,8 +39,18 @@ func main() {
 		log.Fatalf("Failed to render HTML: %v", err)
 	}
 
-	// Save the modified content to 'output.php'
-	if err := os.WriteFile("output.php", buf.Bytes(), 0644); err != nil {
+	// After rendering the HTML to buf
+	renderedHTML := buf.String()
+
+	// After unescaping PHP tags
+	unescapedHTML := strings.ReplaceAll(renderedHTML, "&lt;?php", "<?php")
+	unescapedHTML = strings.ReplaceAll(unescapedHTML, "?&gt;", "?>")
+
+	// Replace HTML entities with corresponding characters
+	unescapedHTML = strings.ReplaceAll(unescapedHTML, "&#39;", "'")
+
+	// Write the corrected content to 'output.php'
+	if err := os.WriteFile("output.php", []byte(unescapedHTML), 0644); err != nil {
 		log.Fatalf("Failed to write output.php: %v", err)
 	}
 }
