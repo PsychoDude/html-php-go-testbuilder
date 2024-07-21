@@ -49,8 +49,18 @@ func main() {
 	// Replace HTML entities with corresponding characters
 	unescapedHTML = strings.ReplaceAll(unescapedHTML, "&#39;", "'")
 
+	// Remove empty lines from the PHP content
+	phpLines := strings.Split(unescapedHTML, "\n")
+	var nonEmptyPhpLines []string
+	for _, line := range phpLines {
+		if strings.TrimSpace(line) != "" {
+			nonEmptyPhpLines = append(nonEmptyPhpLines, line)
+		}
+	}
+	filteredPhpContent := strings.Join(nonEmptyPhpLines, "\n")
+
 	// Write the corrected content to 'output.php'
-	if err := os.WriteFile("output.php", []byte(unescapedHTML), 0644); err != nil {
+	if err := os.WriteFile("output.php", []byte(filteredPhpContent), 0644); err != nil {
 		log.Fatalf("Failed to write output.php: %v", err)
 	}
 }
